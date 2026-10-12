@@ -1,0 +1,28 @@
+# apriltag_ros config for the workstation tags.
+# size 0.080: black square is 8/10 of the 0.10 m plate.
+# decimate 1.0: tags are only ~8 px per cell, 2.0 is too coarse.
+/**:
+  ros__parameters:
+    use_sim_time: true
+    image_transport: raw
+    # best effort matches either publisher QoS
+    qos_profile: sensor_data
+    family: 36h11
+    size: 0.080
+    max_hamming: 0
+    # PnP pose, published on TF for workstation_identifier
+    pose_estimation_method: pnp
+
+    detector:
+      threads: 2
+      decimate: 1.0
+      blur: 0.0
+      refine: true
+      sharpening: 0.25
+      debug: false
+
+    # our four tags, with readable frame names
+    tag:
+      ids:    [1, 2, 3, 4]
+      frames: [ws01_tag, ws02_tag, ws03_tag, ws04_tag]
+      sizes:  [0.080, 0.080, 0.080, 0.080]

@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<!-- built by gen_objects.py at scale 1, edit that not this -->
+<sdf version="1.6">
+  <model name="r20">
+    <link name="link">
+      <inertial>
+        <mass>0.01</mass>
+        <inertia>
+          <ixx>1.66667e-06</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>1.66667e-06</iyy><iyz>0</iyz>
+          <izz>6.66667e-07</izz>
+        </inertia>
+      </inertial>
+        <collision name="c0">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><cylinder><radius>0.01</radius><length>0.04</length></cylinder></geometry>
+          <surface>
+            <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+            <contact><ode>
+              <kp>1e6</kp><kd>100</kd>
+              <min_depth>0.0005</min_depth><max_vel>0.0</max_vel>
+            </ode></contact>
+          </surface>
+        </collision>
+        <visual name="v0">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><cylinder><radius>0.01</radius><length>0.04</length></cylinder></geometry>
+          <material>
+            <ambient>0.85 0.15 0.15 1</ambient>
+            <diffuse>0.85 0.15 0.15 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+      <velocity_decay><linear>0.01</linear><angular>0.01</angular></velocity_decay>
+    </link>
+    <self_collide>false</self_collide>
+  </model>
+</sdf>

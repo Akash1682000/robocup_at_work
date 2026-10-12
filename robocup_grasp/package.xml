@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<package format="3">
+  <name>robocup_grasp</name>
+  <version>0.1.0</version>
+  <description>
+    A gazebo plugin that welds whatever is between the fingers to the hand, so
+    that a closed gripper actually carries the object. Separate from
+    robocup_at_work because that package is ament_python and this is the one
+    piece of the robot that has to be c++.
+  </description>
+  <maintainer email="a.sudheesh.akash@gmail.com">Akash</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>gazebo_dev</depend>
+  <depend>gazebo_ros</depend>
+  <depend>rclcpp</depend>
+  <depend>std_srvs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <gazebo_ros gazebo_plugin_path="${prefix}/lib"/>
+  </export>
+</package>

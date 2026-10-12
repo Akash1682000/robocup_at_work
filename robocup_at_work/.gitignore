@@ -1,0 +1,36 @@
+# Generated training data. Rebuild it with:
+#   ros2 launch robocup_at_work robot_gazebo.launch.py gui:=false
+#   python3 scripts/gen_dataset.py --samples 1500
+# It is ~400 MB and would blow up the repo.
+dataset/
+
+# Ultralytics run output is committed (plots, val images, best.pt).
+# last.pt is the final epoch and not needed.
+runs/robocup/weights/last.pt
+*.pt
+!yolov8*.pt.txt
+
+# My save points before risky edits. Useful on disk, not in history.
+*.bak
+*.bak_*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# colcon, if anyone builds from inside the package
+build/
+install/
+log/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Personal notes and dev tools, kept local
+docs/*.md
+launch/test_base.launch.py
+scripts/watch_grasp.py

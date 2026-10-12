@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robocup_robot">
+
+  <!-- Include the mecanum base -->
+  <xacro:include filename="$(find robocup_at_work)/urdf/mecanum_base.urdf.xacro"/>
+
+  <!-- Include sensors -->
+  <xacro:include filename="$(find robocup_at_work)/urdf/sensors.urdf.xacro"/>
+  <xacro:include filename="$(find robocup_at_work)/urdf/panda_gazebo_colors.urdf.xacro"/>
+
+  <!-- Include the arm and its hardware interface -->
+  <xacro:include filename="$(find robocup_at_work)/urdf/panda_arm.urdf.xacro"/>
+  <xacro:include filename="$(find robocup_at_work)/urdf/control.urdf.xacro"/>
+
+  <joint name="panda_base_joint" type="fixed">
+    <parent link="arm_mount_link"/>
+    <child link="panda_link0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ==================== GAZEBO PLUGIN FOR MOBILE BASE ==================== -->
+  <gazebo>
+    <plugin name="mecanum_controller" filename="libgazebo_ros_planar_move.so">
+      <ros>
+        <remapping>cmd_vel:=cmd_vel</remapping>
+        <remapping>odom:=odom</remapping>
+      </ros>
+      <!-- Update every physics step so the base can't creep between
+           updates (50 Hz gave ~5 mm/s). Odom still published at 50 Hz. -->
+      <update_rate>1000</update_rate>
+      <publish_rate>50</publish_rate>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+    </plugin>
+  </gazebo>
+
+  <!-- Grasp plugin. ODE contacts can't hold the object, so robocup_grasp
+       adds a real joint on /grasp/attach and removes it on /grasp/detach. -->
+  <gazebo>
+    <plugin name="grasp" filename="librobocup_grasp_plugin.so">
+      <palm>panda_link7</palm>
+      <left_finger>panda_leftfinger</left_finger>
+      <right_finger>panda_rightfinger</right_finger>
+      <reach>0.035</reach>
+    </plugin>
+  </gazebo>
+
+  <!-- Base color in Gazebo -->
+  <gazebo reference="base_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <!-- Keep wheel mu at 0.1. Raising it to 1.0 was tested and made the creep
+       worse (stick-slip against planar_move's per-step velocity reset). -->
+  <gazebo reference="front_left_wheel_link">
+    <material>Gazebo/DarkGrey</material>
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+  </gazebo>
+  <gazebo reference="front_right_wheel_link">
+    <material>Gazebo/DarkGrey</material>
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+  </gazebo>
+  <gazebo reference="rear_left_wheel_link">
+    <material>Gazebo/DarkGrey</material>
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+  </gazebo>
+  <gazebo reference="rear_right_wheel_link">
+    <material>Gazebo/DarkGrey</material>
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+  </gazebo>
+
+</robot>

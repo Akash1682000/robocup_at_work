@@ -1,0 +1,467 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="robocup_arena_mapping">
+
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+    </physics>
+
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <!-- ===== FLOOR (8m x 6m) ===== -->
+    <model name="arena_floor">
+      <static>true</static>
+      <pose>0 0 0.001 0 0 0</pose>
+      <link name="link">
+        <visual name="v"><geometry><box><size>8 6 0.002</size></box></geometry>
+          <material><ambient>0.75 0.73 0.70 1</ambient><diffuse>0.75 0.73 0.70 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== OUTER WALLS (30cm high, 5cm thick) ===== -->
+    <!-- Arena interior: x=[-3.775, 3.775], y=[-2.775, 2.775] -->
+
+    <!-- North wall - full, y=2.8 -->
+    <model name="wall_north">
+      <static>true</static>
+      <pose>0 2.8 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>8 0.05 0.3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>8 0.05 0.3</size></box></geometry>
+          <material><ambient>0.7 0.55 0.3 1</ambient><diffuse>0.7 0.55 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- South wall - LEFT section (x=[-4.0, -1.0]) -->
+    <model name="wall_south_left">
+      <static>true</static>
+      <pose>-2.5 -2.8 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>3 0.05 0.3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>3 0.05 0.3</size></box></geometry>
+          <material><ambient>0.7 0.55 0.3 1</ambient><diffuse>0.7 0.55 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- South wall - RIGHT section (x=[1.0, 4.0]) -->
+    <model name="wall_south_right">
+      <static>true</static>
+      <pose>2.5 -2.8 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>3 0.05 0.3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>3 0.05 0.3</size></box></geometry>
+          <material><ambient>0.7 0.55 0.3 1</ambient><diffuse>0.7 0.55 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Red tape marking south entry gap (visual only) -->
+    <model name="red_tape_south">
+      <static>true</static>
+      <pose>0 -2.8 0.003 0 0 0</pose>
+      <link name="link">
+        <visual name="v"><geometry><box><size>2 0.08 0.003</size></box></geometry>
+          <material><ambient>0.95 0.05 0.05 1</ambient><diffuse>0.95 0.05 0.05 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- East wall - TOP section (y=[0.0, 2.8]) -->
+    <model name="wall_east_top">
+      <static>true</static>
+      <pose>3.8 1.4 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.05 2.8 0.3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.05 2.8 0.3</size></box></geometry>
+          <material><ambient>0.7 0.55 0.3 1</ambient><diffuse>0.7 0.55 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- East wall - BOTTOM section (y=[-2.8, -0.8]) -->
+    <model name="wall_east_bottom">
+      <static>true</static>
+      <pose>3.8 -1.8 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.05 2.0 0.3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.05 2.0 0.3</size></box></geometry>
+          <material><ambient>0.7 0.55 0.3 1</ambient><diffuse>0.7 0.55 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Red tape marking east entry gap (visual only) -->
+    <model name="red_tape_east">
+      <static>true</static>
+      <pose>3.8 -0.4 0.003 0 0 1.57</pose>
+      <link name="link">
+        <visual name="v"><geometry><box><size>0.8 0.08 0.003</size></box></geometry>
+          <material><ambient>0.95 0.05 0.05 1</ambient><diffuse>0.95 0.05 0.05 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- West wall - full, x=-3.8 -->
+    <model name="wall_west">
+      <static>true</static>
+      <pose>-3.8 0 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.05 5.6 0.3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.05 5.6 0.3</size></box></geometry>
+          <material><ambient>0.7 0.55 0.3 1</ambient><diffuse>0.7 0.55 0.3 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== INNER WALLS - CENTRAL ISLAND LOOP =====
+         Island wall at y=0 with a loop around it, plus two chicane stubs.
+         All gaps are >= 1.26 m (robot + inflation). -->
+
+    <model name="iwall_island">
+      <static>true</static>
+      <pose>0 0 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>3.4 0.10 0.3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>3.4 0.10 0.3</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="iwall_stub_n">
+      <static>true</static>
+      <pose>-1.0 2.225 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.10 1.25 0.3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.10 1.25 0.3</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="iwall_stub_s">
+      <static>true</static>
+      <pose>1.1 -2.225 0.15 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.10 1.25 0.3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.10 1.25 0.3</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== WORKSTATION TABLES =====
+         Against the outer walls, 0.1 m high. -->
+
+    <!-- WS01 - against NORTH wall, left zone (north zone, west side) -->
+    <!-- Approach from south: y < 2.25 (1.5m clearance from Wall A north face at y=0.75) -->
+    <model name="table_ws01">
+      <static>true</static>
+      <pose>-2.0 2.5 0.05 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.8 0.5 0.1</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.8 0.5 0.1</size></box></geometry>
+          <material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.95 0.95 0.95 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- WS02 - against WEST wall, center zone (center zone, accessible via west gap of wall B) -->
+    <!-- Approach from east: x > -3.05 -->
+    <model name="table_ws02">
+      <static>true</static>
+      <pose>-3.3 0.0 0.05 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.5 0.8 0.1</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.5 0.8 0.1</size></box></geometry>
+          <material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.95 0.95 0.95 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- WS03 - against NORTH wall, right zone (north zone, east side, easiest access) -->
+    <!-- Approach from south: direct access via east gap of wall A -->
+    <model name="table_ws03">
+      <static>true</static>
+      <pose>2.0 2.5 0.05 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.8 0.5 0.1</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.8 0.5 0.1</size></box></geometry>
+          <material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.95 0.95 0.95 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- WS04 - against EAST wall, south zone (south zone east side, direct from start) -->
+    <!-- Approach from west: x < 3.05 -->
+    <model name="table_ws04">
+      <static>true</static>
+      <pose>3.3 -1.5 0.05 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.5 0.8 0.1</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.5 0.8 0.1</size></box></geometry>
+          <material><ambient>0.95 0.95 0.95 1</ambient><diffuse>0.95 0.95 0.95 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== SLAM FEATURE PILLARS (thin, axis-aligned, help SLAM close loops) ===== -->
+    <model name="pillar1">
+      <static>true</static>
+      <pose>-1.5 -1.5 0.5 0 0 0</pose>
+      <link name="l">
+        <collision name="c"><geometry><box><size>0.1 0.1 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.1 0.1 1.0</size></box></geometry>
+          <material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+    <model name="pillar2">
+      <static>true</static>
+      <pose>1.5 1.5 0.5 0 0 0</pose>
+      <link name="l">
+        <collision name="c"><geometry><box><size>0.1 0.1 1.0</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.1 0.1 1.0</size></box></geometry>
+          <material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== APRILTAGS ON TABLES (camera detection markers) ===== -->
+    <!-- AprilTag WS01 - Tag ID 0 -->
+    <model name="apriltag_ws01">
+      <static>true</static>
+      <pose>-2.0 2.5 0.105 0 0 0</pose>
+      <link name="link">
+        <visual name="border"><geometry><box><size>0.10 0.10 0.002</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="inner"><pose>0 0 0.001 0 0 0</pose>
+          <geometry><box><size>0.07 0.07 0.001</size></box></geometry>
+          <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material></visual>
+        <visual name="code1"><pose>-0.02 0.02 0.002 0 0 0</pose>
+          <geometry><box><size>0.012 0.012 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- AprilTag WS02 - Tag ID 1 -->
+    <model name="apriltag_ws02">
+      <static>true</static>
+      <pose>-3.3 0.0 0.105 0 0 0</pose>
+      <link name="link">
+        <visual name="border"><geometry><box><size>0.10 0.10 0.002</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="inner"><pose>0 0 0.001 0 0 0</pose>
+          <geometry><box><size>0.07 0.07 0.001</size></box></geometry>
+          <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material></visual>
+        <visual name="code1"><pose>0.02 0.02 0.002 0 0 0</pose>
+          <geometry><box><size>0.012 0.012 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="code2"><pose>-0.02 -0.02 0.002 0 0 0</pose>
+          <geometry><box><size>0.012 0.012 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- AprilTag WS03 - Tag ID 2 -->
+    <model name="apriltag_ws03">
+      <static>true</static>
+      <pose>2.0 2.5 0.105 0 0 0</pose>
+      <link name="link">
+        <visual name="border"><geometry><box><size>0.10 0.10 0.002</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="inner"><pose>0 0 0.001 0 0 0</pose>
+          <geometry><box><size>0.07 0.07 0.001</size></box></geometry>
+          <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material></visual>
+        <visual name="code1"><pose>-0.02 -0.02 0.002 0 0 0</pose>
+          <geometry><box><size>0.012 0.012 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="code2"><pose>0.02 0.02 0.002 0 0 0</pose>
+          <geometry><box><size>0.012 0.012 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="code3"><pose>0.02 -0.02 0.002 0 0 0</pose>
+          <geometry><box><size>0.012 0.012 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- AprilTag WS04 - Tag ID 3 -->
+    <model name="apriltag_ws04">
+      <static>true</static>
+      <pose>3.3 -1.5 0.105 0 0 0</pose>
+      <link name="link">
+        <visual name="border"><geometry><box><size>0.10 0.10 0.002</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="inner"><pose>0 0 0.001 0 0 0</pose>
+          <geometry><box><size>0.07 0.07 0.001</size></box></geometry>
+          <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material></visual>
+        <visual name="code1"><pose>0.02 -0.02 0.002 0 0 0</pose>
+          <geometry><box><size>0.012 0.012 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="code2"><pose>-0.02 0.02 0.002 0 0 0</pose>
+          <geometry><box><size>0.012 0.012 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="code3"><pose>0.0 0.0 0.002 0 0 0</pose>
+          <geometry><box><size>0.012 0.012 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- ===== FLOOR STATION NUMBERS ===== -->
+    <!-- Number 1 near WS01 -->
+    <model name="num1">
+      <static>true</static>
+      <pose>-2.0 2.05 0.003 0 0 0</pose>
+      <link name="link">
+        <visual name="bg"><geometry><box><size>0.3 0.4 0.002</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual>
+        <visual name="v1"><pose>0 0 0.001 0 0 0</pose>
+          <geometry><box><size>0.05 0.3 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="v2"><pose>-0.03 0.12 0.001 0 0 0.5</pose>
+          <geometry><box><size>0.05 0.08 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Number 2 near WS02 -->
+    <model name="num2">
+      <static>true</static>
+      <pose>-2.9 0.0 0.003 0 0 0</pose>
+      <link name="link">
+        <visual name="bg"><geometry><box><size>0.3 0.4 0.002</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual>
+        <visual name="top"><pose>0 0.13 0.001 0 0 0</pose>
+          <geometry><box><size>0.18 0.04 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="mid"><pose>0 0 0.001 0 0 0</pose>
+          <geometry><box><size>0.18 0.04 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="bot"><pose>0 -0.13 0.001 0 0 0</pose>
+          <geometry><box><size>0.18 0.04 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="rt"><pose>0.07 0.065 0.001 0 0 0</pose>
+          <geometry><box><size>0.04 0.13 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="lb"><pose>-0.07 -0.065 0.001 0 0 0</pose>
+          <geometry><box><size>0.04 0.13 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Number 3 near WS03 -->
+    <model name="num3">
+      <static>true</static>
+      <pose>2.0 2.05 0.003 0 0 0</pose>
+      <link name="link">
+        <visual name="bg"><geometry><box><size>0.3 0.4 0.002</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual>
+        <visual name="top"><pose>0 0.13 0.001 0 0 0</pose>
+          <geometry><box><size>0.18 0.04 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="mid"><pose>0 0 0.001 0 0 0</pose>
+          <geometry><box><size>0.18 0.04 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="bot"><pose>0 -0.13 0.001 0 0 0</pose>
+          <geometry><box><size>0.18 0.04 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="rt"><pose>0.07 0.065 0.001 0 0 0</pose>
+          <geometry><box><size>0.04 0.13 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="rb"><pose>0.07 -0.065 0.001 0 0 0</pose>
+          <geometry><box><size>0.04 0.13 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- Number 4 near WS04 -->
+    <model name="num4">
+      <static>true</static>
+      <pose>2.9 -1.5 0.003 0 0 0</pose>
+      <link name="link">
+        <visual name="bg"><geometry><box><size>0.3 0.4 0.002</size></box></geometry>
+          <material><ambient>0.15 0.15 0.15 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual>
+        <visual name="lt"><pose>-0.07 0.065 0.001 0 0 0</pose>
+          <geometry><box><size>0.04 0.13 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="mid"><pose>0 0 0.001 0 0 0</pose>
+          <geometry><box><size>0.18 0.04 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+        <visual name="rf"><pose>0.07 0 0.001 0 0 0</pose>
+          <geometry><box><size>0.04 0.3 0.001</size></box></geometry>
+          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <!-- ===== START AREA (green, south zone east side, robot spawn) ===== -->
+    <model name="start_area">
+      <static>true</static>
+      <pose>2.5 -2.2 0.002 0 0 0</pose>
+      <link name="link">
+        <visual name="bg"><geometry><box><size>1.2 0.8 0.002</size></box></geometry>
+          <material><ambient>0 0.7 0 1</ambient><diffuse>0 0.7 0 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="start_S"><static>true</static><pose>2.1 -2.2 0.004 0 0 0</pose><link name="l">
+      <visual name="top"><pose>0 0.08 0 0 0 0</pose><geometry><box><size>0.12 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="mid"><pose>0 0 0 0 0 0</pose><geometry><box><size>0.12 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="bot"><pose>0 -0.08 0 0 0 0</pose><geometry><box><size>0.12 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="lt"><pose>-0.045 0.04 0 0 0 0</pose><geometry><box><size>0.03 0.08 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="rb"><pose>0.045 -0.04 0 0 0 0</pose><geometry><box><size>0.03 0.08 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+    </link></model>
+    <model name="start_T"><static>true</static><pose>2.3 -2.2 0.004 0 0 0</pose><link name="l">
+      <visual name="top"><pose>0 0.08 0 0 0 0</pose><geometry><box><size>0.12 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="stem"><pose>0 0 0 0 0 0</pose><geometry><box><size>0.03 0.19 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+    </link></model>
+    <model name="start_A"><static>true</static><pose>2.5 -2.2 0.004 0 0 0</pose><link name="l">
+      <visual name="left"><pose>-0.04 0 0 0 0 0</pose><geometry><box><size>0.03 0.19 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="right"><pose>0.04 0 0 0 0 0</pose><geometry><box><size>0.03 0.19 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="top"><pose>0 0.08 0 0 0 0</pose><geometry><box><size>0.11 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="mid"><pose>0 0 0 0 0 0</pose><geometry><box><size>0.11 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+    </link></model>
+    <model name="start_R"><static>true</static><pose>2.7 -2.2 0.004 0 0 0</pose><link name="l">
+      <visual name="stem"><pose>-0.04 0 0 0 0 0</pose><geometry><box><size>0.03 0.19 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="top"><pose>0 0.08 0 0 0 0</pose><geometry><box><size>0.11 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="mid"><pose>0 0 0 0 0 0</pose><geometry><box><size>0.11 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="rt"><pose>0.04 0.04 0 0 0 0</pose><geometry><box><size>0.03 0.08 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="leg"><pose>0.04 -0.04 0 0 0 0.3</pose><geometry><box><size>0.03 0.1 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+    </link></model>
+    <model name="start_T2"><static>true</static><pose>2.9 -2.2 0.004 0 0 0</pose><link name="l">
+      <visual name="top"><pose>0 0.08 0 0 0 0</pose><geometry><box><size>0.12 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="stem"><pose>0 0 0 0 0 0</pose><geometry><box><size>0.03 0.19 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+    </link></model>
+
+    <!-- ===== GOAL/END AREA (green, north zone west side, near WS01) ===== -->
+    <model name="goal_area">
+      <static>true</static>
+      <pose>-2.8 2.2 0.002 0 0 0</pose>
+      <link name="link">
+        <visual name="bg"><geometry><box><size>1.0 0.5 0.002</size></box></geometry>
+          <material><ambient>0 0.7 0 1</ambient><diffuse>0 0.7 0 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="end_E"><static>true</static><pose>-3.1 2.2 0.004 0 0 0</pose><link name="l">
+      <visual name="stem"><pose>-0.04 0 0 0 0 0</pose><geometry><box><size>0.03 0.19 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="top"><pose>0 0.08 0 0 0 0</pose><geometry><box><size>0.11 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="mid"><pose>0 0 0 0 0 0</pose><geometry><box><size>0.11 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="bot"><pose>0 -0.08 0 0 0 0</pose><geometry><box><size>0.11 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+    </link></model>
+    <model name="end_N"><static>true</static><pose>-2.9 2.2 0.004 0 0 0</pose><link name="l">
+      <visual name="left"><pose>-0.04 0 0 0 0 0</pose><geometry><box><size>0.03 0.19 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="right"><pose>0.04 0 0 0 0 0</pose><geometry><box><size>0.03 0.19 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="diag"><pose>0 0 0 0 0 0.5</pose><geometry><box><size>0.03 0.2 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+    </link></model>
+    <model name="end_D"><static>true</static><pose>-2.7 2.2 0.004 0 0 0</pose><link name="l">
+      <visual name="stem"><pose>-0.04 0 0 0 0 0</pose><geometry><box><size>0.03 0.19 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="top"><pose>0 0.08 0 0 0 0</pose><geometry><box><size>0.08 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="bot"><pose>0 -0.08 0 0 0 0</pose><geometry><box><size>0.08 0.03 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+      <visual name="right"><pose>0.04 0 0 0 0 0</pose><geometry><box><size>0.03 0.16 0.001</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual>
+    </link></model>
+
+  </world>
+</sdf>

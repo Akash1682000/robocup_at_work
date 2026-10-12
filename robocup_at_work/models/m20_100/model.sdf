@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<!-- built by gen_objects.py at scale 1, edit that not this -->
+<sdf version="1.6">
+  <model name="m20_100">
+    <link name="link">
+      <inertial>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>2.80333e-05</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>0.000180683</iyy><iyz>0</iyz>
+          <izz>0.000180683</izz>
+        </inertia>
+      </inertial>
+        <collision name="c0">
+          <pose>0.0075 0 0 0 1.5708 0</pose>
+          <geometry><cylinder><radius>0.01</radius><length>0.085</length></cylinder></geometry>
+          <surface>
+            <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+            <contact><ode>
+              <kp>1e6</kp><kd>100</kd>
+              <min_depth>0.0005</min_depth><max_vel>0.0</max_vel>
+            </ode></contact>
+          </surface>
+        </collision>
+        <visual name="v0">
+          <pose>0.0075 0 0 0 1.5708 0</pose>
+          <geometry><cylinder><radius>0.01</radius><length>0.085</length></cylinder></geometry>
+          <material>
+            <ambient>0.75 0.75 0.78 1</ambient>
+            <diffuse>0.75 0.75 0.78 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+        <collision name="c1">
+          <pose>-0.0425 0 0 0 1.5708 0</pose>
+          <geometry><cylinder><radius>0.0145</radius><length>0.015</length></cylinder></geometry>
+          <surface>
+            <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+            <contact><ode>
+              <kp>1e6</kp><kd>100</kd>
+              <min_depth>0.0005</min_depth><max_vel>0.0</max_vel>
+            </ode></contact>
+          </surface>
+        </collision>
+        <visual name="v1">
+          <pose>-0.0425 0 0 0 1.5708 0</pose>
+          <geometry><cylinder><radius>0.0145</radius><length>0.015</length></cylinder></geometry>
+          <material>
+            <ambient>0.35 0.35 0.38 1</ambient>
+            <diffuse>0.35 0.35 0.38 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+      <velocity_decay><linear>0.01</linear><angular>0.01</angular></velocity_decay>
+    </link>
+    <self_collide>false</self_collide>
+  </model>
+</sdf>

@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mecanum_base">
+
+  <!-- ==================== PROPERTIES ==================== -->
+  <xacro:property name="base_length" value="0.6"/>
+  <xacro:property name="base_width" value="0.4"/>
+  <xacro:property name="base_height" value="0.15"/>
+  <xacro:property name="wheel_radius" value="0.05"/>
+  <xacro:property name="wheel_width" value="0.04"/>
+  <xacro:property name="wheel_offset_x" value="0.22"/>
+  <xacro:property name="wheel_offset_y" value="0.22"/>
+  <xacro:property name="base_mass" value="20.0"/>
+  <xacro:property name="wheel_mass" value="1.0"/>
+
+  <!-- Wheel damping/friction act as the motor holding torque. At 0.1 the
+       arm load rolled the base ~5 mm/s. planar_move sets velocity directly,
+       so driving is not affected. -->
+  <xacro:property name="wheel_damping" value="10.0"/>
+  <xacro:property name="wheel_friction" value="10.0"/>
+
+  <!-- ==================== MACROS ==================== -->
+
+  <!-- Inertia for a box shape -->
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(y*y+z*z)/12}" ixy="0" ixz="0"
+               iyy="${m*(x*x+z*z)/12}" iyz="0"
+               izz="${m*(x*x+y*y)/12}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- Inertia for a cylinder shape -->
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(3*r*r+h*h)/12}" ixy="0" ixz="0"
+               iyy="${m*(3*r*r+h*h)/12}" iyz="0"
+               izz="${m*r*r/2}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- Mecanum wheel macro -->
+  <xacro:macro name="mecanum_wheel" params="prefix x_offset y_offset">
+    <link name="${prefix}_wheel_link">
+      <visual>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="dark_grey">
+          <color rgba="0.3 0.3 0.3 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+    </link>
+
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${prefix}_wheel_link"/>
+      <origin xyz="${x_offset} ${y_offset} 0.0" rpy="${-pi/2} 0 0"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="${wheel_damping}" friction="${wheel_friction}"/>
+    </joint>
+
+    <transmission name="${prefix}_wheel_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${prefix}_wheel_joint">
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${prefix}_wheel_motor">
+        <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+  </xacro:macro>
+
+  <!-- ==================== BASE LINK ==================== -->
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+      <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
+      <material name="blue">
+        <color rgba="0.2 0.2 0.8 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+      <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="${base_mass}"/>
+      <origin xyz="0 0 ${base_height/2}" rpy="0 0 0"/>
+      <inertia ixx="${base_mass*(base_width*base_width+base_height*base_height)/12}" ixy="0" ixz="0"
+               iyy="${base_mass*(base_length*base_length+base_height*base_height)/12}" iyz="0"
+               izz="${base_mass*(base_length*base_length+base_width*base_width)/12}"/>
+    </inertial>
+  </link>
+
+  <!-- ==================== WHEELS ==================== -->
+  <xacro:mecanum_wheel prefix="front_left"  x_offset="${wheel_offset_x}"  y_offset="${wheel_offset_y}"/>
+  <xacro:mecanum_wheel prefix="front_right" x_offset="${wheel_offset_x}"  y_offset="${-wheel_offset_y}"/>
+  <xacro:mecanum_wheel prefix="rear_left"   x_offset="${-wheel_offset_x}" y_offset="${wheel_offset_y}"/>
+  <xacro:mecanum_wheel prefix="rear_right"  x_offset="${-wheel_offset_x}" y_offset="${-wheel_offset_y}"/>
+
+  <!-- ==================== ARM MOUNT POINT ==================== -->
+  <link name="arm_mount_link"/>
+
+  <joint name="arm_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm_mount_link"/>
+    <origin xyz="-0.05 0 ${base_height}" rpy="0 0 0"/>
+  </joint>
+
+</robot>

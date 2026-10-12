@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda_arm">
+
+  <!-- Finger effort 3 N instead of Franka's 20 N, enough to hold the
+       objects without pushing them off the table. -->
+  <xacro:property name="finger_effort" value="3.0"/>
+
+  <!-- bounding box of the stock finger collision mesh -->
+  <xacro:property name="finger_pad_x" value="0.0210"/>
+  <xacro:property name="finger_pad_y" value="0.0265"/>
+  <!-- Pad ends at the tcp plane, not the mesh tip. A longer pad hits the
+       table before low objects like the Bearing are reached. -->
+  <xacro:property name="finger_pad_z" value="0.0450"/>
+
+  <!-- Franka Panda based on moveit_resources_panda_description, with
+       inertials and ros2_control added. Meshes use absolute paths since
+       gazebo does not resolve package://. -->
+
+  <xacro:property name="mesh_dir"
+                  value="file:///opt/ros/humble/share/moveit_resources_panda_description/meshes"/>
+
+  <!-- ==================== LINK MACRO ==================== -->
+  <!-- Inertia approximated as a cylinder with the real link mass. -->
+  <xacro:macro name="panda_link" params="name mass radius length">
+    <link name="${name}">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/${name.split('_')[1]}.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="${mesh_dir}/collision/${name.split('_')[1]}.stl"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <inertia ixx="${mass*(3*radius*radius+length*length)/12}" ixy="0" ixz="0"
+                 iyy="${mass*(3*radius*radius+length*length)/12}" iyz="0"
+                 izz="${mass*radius*radius/2}"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <!-- ==================== ARM LINKS ==================== -->
+  <xacro:panda_link name="panda_link0" mass="3.06" radius="0.06" length="0.14"/>
+  <xacro:panda_link name="panda_link1" mass="2.34" radius="0.06" length="0.19"/>
+  <xacro:panda_link name="panda_link2" mass="2.36" radius="0.06" length="0.19"/>
+  <xacro:panda_link name="panda_link3" mass="2.38" radius="0.06" length="0.12"/>
+  <xacro:panda_link name="panda_link4" mass="2.43" radius="0.06" length="0.12"/>
+  <xacro:panda_link name="panda_link5" mass="3.50" radius="0.05" length="0.26"/>
+  <xacro:panda_link name="panda_link6" mass="1.47" radius="0.05" length="0.08"/>
+  <xacro:panda_link name="panda_link7" mass="0.45" radius="0.04" length="0.05"/>
+
+  <link name="panda_link8"/>
+
+  <!-- ==================== ARM JOINTS ==================== -->
+  <!-- Franka limits. Small damping, only to stop ringing. -->
+  <joint name="panda_joint1" type="revolute">
+    <origin xyz="0 0 0.333" rpy="0 0 0"/>
+    <parent link="panda_link0"/>
+    <child link="panda_link1"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="87" lower="-2.9671" upper="2.9671" velocity="2.3925"/>
+    <dynamics damping="1.0" friction="0.1"/>
+  </joint>
+
+  <joint name="panda_joint2" type="revolute">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 0"/>
+    <parent link="panda_link1"/>
+    <child link="panda_link2"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="87" lower="-1.8326" upper="1.8326" velocity="2.3925"/>
+    <dynamics damping="1.0" friction="0.1"/>
+  </joint>
+
+  <joint name="panda_joint3" type="revolute">
+    <origin xyz="0 -0.316 0" rpy="${pi/2} 0 0"/>
+    <parent link="panda_link2"/>
+    <child link="panda_link3"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="87" lower="-2.9671" upper="2.9671" velocity="2.3925"/>
+    <dynamics damping="1.0" friction="0.1"/>
+  </joint>
+
+  <joint name="panda_joint4" type="revolute">
+    <origin xyz="0.0825 0 0" rpy="${pi/2} 0 0"/>
+    <parent link="panda_link3"/>
+    <child link="panda_link4"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="87" lower="-3.1416" upper="0.0873" velocity="2.3925"/>
+    <dynamics damping="1.0" friction="0.1"/>
+  </joint>
+
+  <joint name="panda_joint5" type="revolute">
+    <origin xyz="-0.0825 0.384 0" rpy="${-pi/2} 0 0"/>
+    <parent link="panda_link4"/>
+    <child link="panda_link5"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="12" lower="-2.9671" upper="2.9671" velocity="2.8710"/>
+    <dynamics damping="0.5" friction="0.05"/>
+  </joint>
+
+  <joint name="panda_joint6" type="revolute">
+    <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+    <parent link="panda_link5"/>
+    <child link="panda_link6"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="12" lower="-0.0873" upper="3.8223" velocity="2.8710"/>
+    <dynamics damping="0.5" friction="0.05"/>
+  </joint>
+
+  <joint name="panda_joint7" type="revolute">
+    <origin xyz="0.088 0 0" rpy="${pi/2} 0 0"/>
+    <parent link="panda_link6"/>
+    <child link="panda_link7"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="12" lower="-2.9671" upper="2.9671" velocity="2.8710"/>
+    <dynamics damping="0.5" friction="0.05"/>
+  </joint>
+
+  <joint name="panda_joint8" type="fixed">
+    <origin xyz="0 0 0.107" rpy="0 0 0"/>
+    <parent link="panda_link7"/>
+    <child link="panda_link8"/>
+  </joint>
+
+  <!-- ==================== HAND ==================== -->
+  <joint name="panda_hand_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 ${-pi/4}"/>
+    <parent link="panda_link8"/>
+    <child link="panda_hand"/>
+  </joint>
+
+  <link name="panda_hand">
+    <visual>
+      <geometry>
+        <mesh filename="${mesh_dir}/visual/hand.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="${mesh_dir}/collision/hand.stl"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.73"/>
+      <origin xyz="0 0 0.04" rpy="0 0 0"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.0025" iyz="0" izz="0.0017"/>
+    </inertial>
+  </link>
+
+  <xacro:macro name="panda_finger" params="name flip:=0">
+    <link name="${name}">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 ${flip*pi}"/>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/finger.dae"/>
+        </geometry>
+      </visual>
+      <!-- Box collision instead of the mesh, ODE trimesh contacts were not
+           repeatable. Mirror the offset for the right finger, not the rpy,
+           or the pad ends up on the wrong side. -->
+      <collision>
+        <origin xyz="0 ${(1 - 2*flip) * finger_pad_y/2} ${finger_pad_z/2}"
+                rpy="0 0 0"/>
+        <geometry>
+          <box size="${finger_pad_x} ${finger_pad_y} ${finger_pad_z}"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0.025" rpy="0 0 0"/>
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <xacro:panda_finger name="panda_leftfinger"/>
+  <xacro:panda_finger name="panda_rightfinger" flip="1"/>
+
+  <joint name="panda_finger_joint1" type="prismatic">
+    <origin xyz="0 0 0.0584" rpy="0 0 0"/>
+    <parent link="panda_hand"/>
+    <child link="panda_leftfinger"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="${finger_effort}" lower="0.0" upper="0.04" velocity="0.2"/>
+    <dynamics damping="1.0" friction="0.02"/>
+  </joint>
+
+  <joint name="panda_finger_joint2" type="prismatic">
+    <origin xyz="0 0 0.0584" rpy="0 0 0"/>
+    <parent link="panda_hand"/>
+    <child link="panda_rightfinger"/>
+    <axis xyz="0 -1 0"/>
+    <limit effort="${finger_effort}" lower="0.0" upper="0.04" velocity="0.2"/>
+    <dynamics damping="1.0" friction="0.02"/>
+  </joint>
+
+  <!-- grasp point, between the fingertips -->
+  <link name="panda_tcp"/>
+
+  <joint name="panda_tcp_joint" type="fixed">
+    <origin xyz="0 0 0.1034" rpy="0 0 0"/>
+    <parent link="panda_hand"/>
+    <child link="panda_tcp"/>
+  </joint>
+
+</robot>

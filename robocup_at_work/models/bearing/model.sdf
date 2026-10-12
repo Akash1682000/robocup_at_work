@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<!-- built by gen_objects.py at scale 1, edit that not this -->
+<sdf version="1.6">
+  <model name="bearing">
+    <link name="link">
+      <inertial>
+        <mass>0.06</mass>
+        <inertia>
+          <ixx>5.84e-06</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>5.84e-06</iyy><iyz>0</iyz>
+          <izz>1.024e-05</izz>
+        </inertia>
+      </inertial>
+        <collision name="c0">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><cylinder><radius>0.016</radius><length>0.012</length></cylinder></geometry>
+          <surface>
+            <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+            <contact><ode>
+              <kp>1e6</kp><kd>100</kd>
+              <min_depth>0.0005</min_depth><max_vel>0.0</max_vel>
+            </ode></contact>
+          </surface>
+        </collision>
+        <visual name="v0">
+          <pose>0 0 0 0 0 0</pose>
+          <geometry><cylinder><radius>0.016</radius><length>0.012</length></cylinder></geometry>
+          <material>
+            <ambient>0.25 0.25 0.28 1</ambient>
+            <diffuse>0.25 0.25 0.28 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
+          </material>
+        </visual>
+      <velocity_decay><linear>0.01</linear><angular>0.01</angular></velocity_decay>
+    </link>
+    <self_collide>false</self_collide>
+  </model>
+</sdf>

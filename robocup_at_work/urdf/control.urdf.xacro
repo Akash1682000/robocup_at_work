@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="control">
+
+  <!-- ros2_control hardware, all position commanded. Only the fingers have
+       PID gains (config/arm_controllers.yaml) so they stall on contact. -->
+
+  <!-- start in Franka's ready pose -->
+  <xacro:macro name="arm_joint" params="name initial">
+    <joint name="${name}">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">${initial}</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="finger_joint" params="name">
+    <joint name="${name}">
+      <command_interface name="position_pid"/>
+      <state_interface name="position">
+        <param name="initial_value">0.035</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="wheel_joint" params="name">
+    <joint name="${name}">
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+  <ros2_control name="robocup_hardware" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+
+    <xacro:arm_joint name="panda_joint1" initial="0.0"/>
+    <xacro:arm_joint name="panda_joint2" initial="-0.785"/>
+    <xacro:arm_joint name="panda_joint3" initial="0.0"/>
+    <xacro:arm_joint name="panda_joint4" initial="-2.356"/>
+    <xacro:arm_joint name="panda_joint5" initial="0.0"/>
+    <xacro:arm_joint name="panda_joint6" initial="1.571"/>
+    <xacro:arm_joint name="panda_joint7" initial="0.785"/>
+
+    <!-- Both fingers commanded, no mimic (gazebo mimic pushes through objects).
+         position_pid so the fingers stall on the object. -->
+    <xacro:finger_joint name="panda_finger_joint1"/>
+    <xacro:finger_joint name="panda_finger_joint2"/>
+
+    <!-- Wheels are state only. MoveIt needs every joint state to plan,
+         planar_move drives the base. -->
+    <xacro:wheel_joint name="front_left_wheel_joint"/>
+    <xacro:wheel_joint name="front_right_wheel_joint"/>
+    <xacro:wheel_joint name="rear_left_wheel_joint"/>
+    <xacro:wheel_joint name="rear_right_wheel_joint"/>
+
+  </ros2_control>
+
+  <gazebo>
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <parameters>$(find robocup_at_work)/config/arm_controllers.yaml</parameters>
+      <robot_param>robot_description</robot_param>
+      <robot_param_node>robot_state_publisher</robot_param_node>
+    </plugin>
+  </gazebo>
+
+  <!-- Fingertip contact. kp 1e6: softer pads let the fingers sink through
+       the object. Higher mu made no difference. -->
+  <gazebo reference="panda_leftfinger">
+    <mu1>1.4</mu1>
+    <mu2>1.4</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.01</maxVel>
+  </gazebo>
+
+  <gazebo reference="panda_rightfinger">
+    <mu1>1.4</mu1>
+    <mu2>1.4</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.01</maxVel>
+  </gazebo>
+
+</robot>

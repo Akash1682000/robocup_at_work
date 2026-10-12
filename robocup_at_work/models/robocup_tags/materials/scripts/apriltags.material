@@ -1,0 +1,34 @@
+// AprilTag tag36h11 materials for the workstations.
+// Lighting off so the tags keep full contrast. 400x400 textures.
+
+material RoboCupTags/Tag1
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture tag36_11_00001.png }
+  } }
+}
+
+material RoboCupTags/Tag2
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture tag36_11_00002.png }
+  } }
+}
+
+material RoboCupTags/Tag3
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture tag36_11_00003.png }
+  } }
+}
+
+material RoboCupTags/Tag4
+{
+  technique { pass {
+    lighting off
+    texture_unit { texture tag36_11_00004.png }
+  } }
+}

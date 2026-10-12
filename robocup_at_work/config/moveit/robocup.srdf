@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<robot name="robocup_robot">
+
+  <!-- MoveIt semantic description. No virtual joint, the model frame is
+       base_footprint (same as the detector output).
+       Arm collision pairs come from the stock panda config, base pairs are
+       added by hand and checked with scripts/verify_moveit.py. -->
+
+  <!-- ==================== GROUPS ==================== -->
+  <group name="panda_arm">
+    <chain base_link="panda_link0" tip_link="panda_link8"/>
+  </group>
+
+  <!-- both fingers are commanded, see urdf/control.urdf.xacro -->
+  <group name="hand">
+    <link name="panda_hand"/>
+    <link name="panda_leftfinger"/>
+    <link name="panda_rightfinger"/>
+    <joint name="panda_finger_joint1"/>
+    <joint name="panda_finger_joint2"/>
+  </group>
+
+  <group name="panda_arm_hand">
+    <group name="panda_arm"/>
+    <group name="hand"/>
+  </group>
+
+  <end_effector name="hand" group="hand"
+                parent_group="panda_arm" parent_link="panda_link8"/>
+
+  <!-- ==================== NAMED POSES ==================== -->
+  <!-- ready: start and between picks. transport: folded over the base for
+       driving. Joint 6 is 1.5 instead of the stock 0, which self-collides. -->
+  <group_state name="ready" group="panda_arm">
+    <joint name="panda_joint1" value="0"/>
+    <joint name="panda_joint2" value="-0.785"/>
+    <joint name="panda_joint3" value="0"/>
+    <joint name="panda_joint4" value="-2.356"/>
+    <joint name="panda_joint5" value="0"/>
+    <joint name="panda_joint6" value="1.571"/>
+    <joint name="panda_joint7" value="0.785"/>
+  </group_state>
+
+  <group_state name="transport" group="panda_arm">
+    <joint name="panda_joint1" value="0"/>
+    <joint name="panda_joint2" value="-0.5599"/>
+    <joint name="panda_joint3" value="0"/>
+    <joint name="panda_joint4" value="-2.97"/>
+    <joint name="panda_joint5" value="0"/>
+    <joint name="panda_joint6" value="1.5"/>
+    <joint name="panda_joint7" value="0.785"/>
+  </group_state>
+
+  <group_state name="open" group="hand">
+    <joint name="panda_finger_joint1" value="0.035"/>
+    <joint name="panda_finger_joint2" value="0.035"/>
+  </group_state>
+
+  <group_state name="close" group="hand">
+    <joint name="panda_finger_joint1" value="0"/>
+    <joint name="panda_finger_joint2" value="0"/>
+  </group_state>
+
+  <!-- ==================== BASE ASSEMBLY ==================== -->
+  <!-- Links fixed to base_link never move relative to each other. -->
+  <disable_collisions link1="base_link" link2="lidar_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="camera_mount_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="camera_rgb_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="camera_depth_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="panda_link0" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="front_left_wheel_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="front_right_wheel_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="rear_left_wheel_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="rear_right_wheel_link" reason="Adjacent"/>
+  <disable_collisions link1="camera_mount_link" link2="camera_rgb_link" reason="Adjacent"/>
+  <disable_collisions link1="camera_mount_link" link2="camera_depth_link" reason="Adjacent"/>
+  <disable_collisions link1="camera_mount_link" link2="lidar_link" reason="Never"/>
+  <disable_collisions link1="camera_rgb_link" link2="camera_depth_link" reason="Adjacent"/>
+  <disable_collisions link1="camera_rgb_link" link2="lidar_link" reason="Never"/>
+  <disable_collisions link1="camera_depth_link" link2="lidar_link" reason="Never"/>
+  <disable_collisions link1="camera_mount_link" link2="panda_link0" reason="Never"/>
+  <disable_collisions link1="camera_rgb_link" link2="panda_link0" reason="Never"/>
+  <disable_collisions link1="camera_depth_link" link2="panda_link0" reason="Never"/>
+  <disable_collisions link1="lidar_link" link2="panda_link0" reason="Never"/>
+  <disable_collisions link1="front_left_wheel_link" link2="panda_link0" reason="Never"/>
+  <disable_collisions link1="front_right_wheel_link" link2="panda_link0" reason="Never"/>
+  <disable_collisions link1="rear_left_wheel_link" link2="panda_link0" reason="Never"/>
+  <disable_collisions link1="rear_right_wheel_link" link2="panda_link0" reason="Never"/>
+  <disable_collisions link1="front_left_wheel_link" link2="front_right_wheel_link" reason="Never"/>
+  <disable_collisions link1="front_left_wheel_link" link2="rear_left_wheel_link" reason="Never"/>
+  <disable_collisions link1="front_left_wheel_link" link2="rear_right_wheel_link" reason="Never"/>
+  <disable_collisions link1="front_right_wheel_link" link2="rear_left_wheel_link" reason="Never"/>
+  <disable_collisions link1="front_right_wheel_link" link2="rear_right_wheel_link" reason="Never"/>
+  <disable_collisions link1="rear_left_wheel_link" link2="rear_right_wheel_link" reason="Never"/>
+  <disable_collisions link1="front_left_wheel_link" link2="lidar_link" reason="Never"/>
+  <disable_collisions link1="front_right_wheel_link" link2="lidar_link" reason="Never"/>
+  <disable_collisions link1="rear_left_wheel_link" link2="lidar_link" reason="Never"/>
+  <disable_collisions link1="rear_right_wheel_link" link2="lidar_link" reason="Never"/>
+  <disable_collisions link1="front_left_wheel_link" link2="camera_mount_link" reason="Never"/>
+  <disable_collisions link1="front_right_wheel_link" link2="camera_mount_link" reason="Never"/>
+  <disable_collisions link1="rear_left_wheel_link" link2="camera_mount_link" reason="Never"/>
+  <disable_collisions link1="rear_right_wheel_link" link2="camera_mount_link" reason="Never"/>
+  <disable_collisions link1="front_left_wheel_link" link2="camera_rgb_link" reason="Never"/>
+  <disable_collisions link1="front_right_wheel_link" link2="camera_rgb_link" reason="Never"/>
+  <disable_collisions link1="rear_left_wheel_link" link2="camera_rgb_link" reason="Never"/>
+  <disable_collisions link1="rear_right_wheel_link" link2="camera_rgb_link" reason="Never"/>
+  <disable_collisions link1="front_left_wheel_link" link2="camera_depth_link" reason="Never"/>
+  <disable_collisions link1="front_right_wheel_link" link2="camera_depth_link" reason="Never"/>
+  <disable_collisions link1="rear_left_wheel_link" link2="camera_depth_link" reason="Never"/>
+  <disable_collisions link1="rear_right_wheel_link" link2="camera_depth_link" reason="Never"/>
+
+  <!-- link1 always overlaps the base plate -->
+  <disable_collisions link1="base_link" link2="panda_link1" reason="Default"/>
+
+  <!-- wheels can only be reached through base_link, which is checked -->
+  <disable_collisions link1="front_left_wheel_link" link2="panda_link1" reason="Never"/>
+  <disable_collisions link1="front_right_wheel_link" link2="panda_link1" reason="Never"/>
+  <disable_collisions link1="rear_left_wheel_link" link2="panda_link1" reason="Never"/>
+  <disable_collisions link1="rear_right_wheel_link" link2="panda_link1" reason="Never"/>
+
+  <!-- ==================== ARM, FROM THE STOCK PANDA CONFIG ==================== -->
+  <disable_collisions link1="panda_link0" link2="panda_link1" reason="Adjacent"/>
+  <disable_collisions link1="panda_link0" link2="panda_link2" reason="Never"/>
+  <disable_collisions link1="panda_link0" link2="panda_link3" reason="Never"/>
+  <disable_collisions link1="panda_link0" link2="panda_link4" reason="Never"/>
+  <disable_collisions link1="panda_link1" link2="panda_link2" reason="Adjacent"/>
+  <disable_collisions link1="panda_link1" link2="panda_link3" reason="Never"/>
+  <disable_collisions link1="panda_link1" link2="panda_link4" reason="Never"/>
+  <disable_collisions link1="panda_link2" link2="panda_link3" reason="Adjacent"/>
+  <disable_collisions link1="panda_link2" link2="panda_link4" reason="Never"/>
+  <disable_collisions link1="panda_link2" link2="panda_link6" reason="Never"/>
+  <disable_collisions link1="panda_link3" link2="panda_link4" reason="Adjacent"/>
+  <disable_collisions link1="panda_link3" link2="panda_link5" reason="Never"/>
+  <disable_collisions link1="panda_link3" link2="panda_link6" reason="Never"/>
+  <disable_collisions link1="panda_link3" link2="panda_link7" reason="Never"/>
+  <disable_collisions link1="panda_link4" link2="panda_link5" reason="Adjacent"/>
+  <disable_collisions link1="panda_link4" link2="panda_link6" reason="Never"/>
+  <disable_collisions link1="panda_link4" link2="panda_link7" reason="Never"/>
+  <disable_collisions link1="panda_link5" link2="panda_link6" reason="Adjacent"/>
+  <disable_collisions link1="panda_link6" link2="panda_link7" reason="Adjacent"/>
+  <disable_collisions link1="panda_hand" link2="panda_leftfinger" reason="Adjacent"/>
+  <disable_collisions link1="panda_hand" link2="panda_rightfinger" reason="Adjacent"/>
+  <disable_collisions link1="panda_leftfinger" link2="panda_rightfinger" reason="Default"/>
+  <disable_collisions link1="panda_hand" link2="panda_link3" reason="Never"/>
+  <disable_collisions link1="panda_hand" link2="panda_link4" reason="Never"/>
+  <disable_collisions link1="panda_hand" link2="panda_link6" reason="Never"/>
+  <disable_collisions link1="panda_hand" link2="panda_link7" reason="Adjacent"/>
+  <disable_collisions link1="panda_leftfinger" link2="panda_link3" reason="Never"/>
+  <disable_collisions link1="panda_leftfinger" link2="panda_link4" reason="Never"/>
+  <disable_collisions link1="panda_leftfinger" link2="panda_link6" reason="Never"/>
+  <disable_collisions link1="panda_leftfinger" link2="panda_link7" reason="Never"/>
+  <disable_collisions link1="panda_link3" link2="panda_rightfinger" reason="Never"/>
+  <disable_collisions link1="panda_link4" link2="panda_rightfinger" reason="Never"/>
+  <disable_collisions link1="panda_link6" link2="panda_rightfinger" reason="Never"/>
+  <disable_collisions link1="panda_link7" link2="panda_rightfinger" reason="Never"/>
+
+</robot>
