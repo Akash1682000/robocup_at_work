@@ -219,3 +219,12 @@ robocup_grasp/       Gazebo grasp plugin (C++)
 ## License
 
 MIT
+
+## MuJoCo pick
+
+![F20_20_B squeeze pick in MuJoCo](robocup_at_work/docs/media/mujoco_pick.gif)
+
+Same Panda, gripper limits and object as the Gazebo setup, moved to MuJoCo. The
+pick holds on finger friction alone, no grasp plugin and no attach/weld: the
+fingers keep squeezing with the full 3 N after contact, lift 100 mm and carry.
+Full video: [mujoco_pick.webm](robocup_at_work/docs/media/mujoco_pick.webm).
